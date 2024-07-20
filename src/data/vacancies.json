@@ -1,0 +1,13 @@
+{
+    "name": "Junior программист Python",
+    "area_name": "Москва",
+    "vacancies_url": "https://api.hh.ru/vacancies/103110598?host=hh.ru",
+    "salary_currency": "RUR",
+    "salary_from": 60000,
+    "salary_to": "",
+    "requirement": "Уверенное знание <highlighttext>Python</highlighttext>. Уверенное знание SQL(PSQL, MSSQL). Умение работать с FastAPI. Умение работать с Git. Знание SQLAlchemy. ",
+    "responsibility": "Поддержка микросервисов. Разработка интеграций с внешними и внутренними сервисами. Участие в разработке моделей по прогнозированию.",
+    "employment": "Полная занятость",
+    "experience": "От 1 года до 3 лет",
+    "schedule": "Полный день"
+}

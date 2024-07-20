@@ -1,42 +1,51 @@
-import src.utils as utils
+from settings import FILE_VACANCIES
+import src.interaction as interaction
+from src.api_hh import APIHeadHunter
+from src.utils import  get_data_from_website, save_to_container
+from src.parser import parser_data_website
+from src.file_worker_json import FileWorkerJson
+
 
 def main():
     """ Запуск программы """
 
     user_input = input("Здравствуйте!\n"
-                       "Вы хотите считать вакансии в файл? [yes/no]\n").lower().strip()
+                       "Для запуска поиска вакансий нажмите Enter\n")
 
-    # Пользователь выбрал получить файл с данными с сайта
-    if user_input == "yes":
-        utils.data_sampling()
+    # определить формат приемник
+    type_container = interaction.choose_container()
+    if type_container != 'json':
+        raise f"К сожалению для {type_container} код еще не написан"
 
-        type_file = input("Выберите формат файла: [json/txt/csv]").lower().strip()
+    # определим параметры отбора данных
+    keyword, per_page = interaction.choose_params()
 
-        if type_file == 'json':
-            utils.data_sampling()
+    # получить данные с сайта
+    hh_api = APIHeadHunter()
+    vacancies_from_site = get_data_from_website(hh_api, keyword, per_page)
 
-        elif type_file == 'txt':
-            print('К сожалению, работа с файлами в формате TXT еще не реализован')
+    # получить структуру соответствия полей сайта с атрибутами класса Vacancy
+    structure_fields = hh_api.structure_fields
+    vacancies, dict_vacancies = parser_data_website(vacancies_from_site, structure_fields)
 
-        elif type_file == 'csv':
-            print('К сожалению, работа с файлами в формате CSV еще не реализован')
-        else:
-            print('Выбран неизвестный формат файла')
+    # запишем данные в приемник
+    save_to_container(dict_vacancies)
 
-    elif:
-        user_input = input("Вы хотите отчистить файл [yes/no]?\n")
-        #
-        if user_input == "yes":
+    print(f"Данные считаны успешно!"
+          f"Данные записаны в файл {FILE_VACANCIES}")
+
+    if interaction.choose_way('Вывести данные? [yes/no]'):
+        interaction.print_vacancy(vacancies)
+
+    if interaction.choose_way('Прочитать файл? [yes/no]'):
+        if type_container == 'json':
             file = FileWorkerJson(FILE_VACANCIES)
-            file.del_data()
-            print("Данные удалены!")
+            interaction.print_file(file.get_data())
 
-    return
+    if interaction.choose_way('Удалить файл? [yes/no]'):
+        file = FileWorkerJson(FILE_VACANCIES)
+        file.delete_data()
 
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
